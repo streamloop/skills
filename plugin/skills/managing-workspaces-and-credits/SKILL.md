@@ -9,16 +9,16 @@ Everything — streams, scenes, uploads, playlists, destinations, credits — be
 ## Finding the right workspace
 - `get_selected_workspace` — which one this connection uses now, and why (`explicit`, `header`/`env`, `token-hint`).
 - `list_workspaces` — every workspace with the user's role, and which is selected.
-- `select_workspace { workspaceId }` — switches this connection only (other chats and clients are unaffected). Say which one you switched to.
+- `select_workspace { workspaceId }` — switches this connection only (other chats and clients are unaffected). Say which one you switched to. From then on every list and every credit figure is that workspace's: `list_streams`, `list_uploads`, `list_destinations`, `list_scenes` are the lists to check, and `get_billing_overview` reads its balance, not the one you left.
 - `get_account` — who the login belongs to; it says nothing about workspaces or credits.
 
 Inviting members, roles and API keys are managed in the Streamloop dashboard, not through the MCP.
 
 ## Credits
-Streaming spends the workspace's credits while a stream runs ($1 buys 1,000,000 credits); the rate depends on output quality, and each extra multistream destination adds to it.
-- `get_billing_overview` — balance, credits left, good standing, what is being spent right now, which streams are live and their cost, and the per-minute rate per quality. Estimate remaining time from the balance and the current burn rate; say it's an estimate.
-- `get_streaming_usage { period: DAY | WEEK | MONTH | QUARTER | YEAR, startDate?, endDate? }` — minutes streamed and credits spent in the past, by quality. Use RFC3339 times with an offset.
+Streaming spends the workspace's credits while a stream runs ($1 buys 1,000,000 credits); the rate depends on resolution and frame rate (`q_1080p` at `f_30` is the usual), and each extra multistream destination adds a flat amount per 30 days.
+- `get_billing_overview` — balance, credits left, good standing, what is being spent right now, which streams are live and their cost, and the rate card per quality. "How long can I keep streaming": with the streams live, balance ÷ the current burn; with them stopped, balance ÷ (the rate of each stream's quality, added up). Say it's an estimate.
+- `get_streaming_usage { period: "MONTH", startDate?, endDate? }` — minutes streamed and credits spent in the past, by quality. `period` is the bucket size (`DAY | WEEK | MONTH | QUARTER | YEAR`); `startDate` and `endDate` are the window, RFC3339 with the user's offset (defaults: a recent span, up to now). "Last month": the first of last month to the first of this month.
 
 `check_stream_readiness` doesn't look at credits; they are checked when a stream activates. So a stream that is ready but won't go live (or stopped by itself) is a reason to read `get_billing_overview`.
 
-Credits can't be bought from here: if the balance is short, send the user to the Streamloop dashboard. Don't promise prices or plan limits you haven't read from a tool's answer or description.
+Credits can't be bought from here: if the balance is short, send the user to the Streamloop dashboard. Beyond the rate card `get_billing_overview` answers, don't promise prices or plan limits.

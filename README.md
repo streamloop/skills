@@ -55,6 +55,6 @@ Each skill is `plugin/skills/<name>/SKILL.md`.
 
 ## Where they come from
 
-The scene skills are the same ones Streamloop's studio assistant reads, generated from the studio's source (`studio/src/ai/skills` in `streamloop/live-scene`); the other five are written for agents outside the studio. A release of the studio copies `plugin/streamloop` there into `plugin/` here. Issues and suggestions are welcome here; the text itself is fixed at the source.
+The scene skills are the same ones Streamloop's studio assistant reads, generated from the studio's source (`studio/src/ai/skills` in `streamloop/live-scene`); the other seven are written for agents outside the studio. A release of the studio copies `plugin/streamloop` there into `plugin/` here. Issues and suggestions are welcome here; the text itself is fixed at the source.
 
 Docs: https://streamloop.app/docs · MCP reference: https://streamloop.app/docs/api-reference/mcp/overview

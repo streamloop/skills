@@ -14,11 +14,12 @@ Two APIs on one host, `https://api.streamloop.app`, with the same conventions. E
 - Apps acting for other users use OAuth 2.1 with PKCE (`https://auth.streamloop.app`) and send `Authorization: Bearer …`. Ask for the narrowest scopes: `streamloop:read`, `:write`, `:destructive`.
 
 ## Conventions you can rely on
-- **Errors** are `application/problem+json`: `{ type, title, status, detail, code }`. Branch on `code` (`NOT_FOUND`, `CONFLICT`, `STREAM_LIVE`, …), not on `detail`, which is prose for people.
+- **Errors** are `application/problem+json`: `{ type, title, status, detail, code }`, plus what the code needs (`reason`, `errors[]`, `currentRevision`, …). Branch on `code` (`NOT_FOUND`, `CONFLICT`, `STREAM_LIVE`, …), not on `detail`, which is prose for people.
 - **Lists** return `{ data, page: { nextCursor } }`. Pass `?limit=` (1–100) and `?cursor=<nextCursor>` until `nextCursor` is null.
-- **Retries:** send `Idempotency-Key: <uuid>` on POSTs that create things. A retry with the same key replays the first answer for 24 h instead of doing the work twice. Generate one key per logical operation, not per attempt.
-- **Rate limits:** read the `RateLimit-Remaining` and `RateLimit-Reset` headers, and back off on 429.
-- **Concurrent edits** (Scenes API): a GET answers an `ETag`. Send it back as `If-Match` on PUT, PATCH and DELETE. If someone changed the resource since, the answer is 412 and nothing is overwritten: re-read, re-apply, retry. `If-None-Match: *` on PUT creates only if absent.
+- **Retries:** send `Idempotency-Key` on every POST that does something (create, start, stop, publish). A retry with the same key replays the first answer for 24 h instead of doing the work twice; the same key with another body is refused. One key per logical operation, not per attempt — for a job that may run twice, derive it from the job (`start-stream_01ABC-2026-10-08`), not from a fresh uuid.
+- **Rate limits:** 600 requests a minute per key. Read `RateLimit-Remaining` and `RateLimit-Reset`; a 429 (`RATE_LIMITED`) carries `Retry-After` in seconds: wait that long, then retry the same request with the same `Idempotency-Key`.
+- **Stream state** (`GET /v1/streams/{id}` → `state`): `draft`, `invalid`, `scheduled`, `preparing`, `activating`, `active`, `failing`, `failed`, `stopping`, `stopped`. "Live" is `preparing`, `activating` or `active`. A start on a stream in one of those is 409 `STREAM_ILLEGAL_TRANSITION`: a job that must not double-start reads the state first and treats that 409 as done.
+- **Concurrent edits** (Scenes API): a GET answers an `ETag` (strong; a weak `W/` tag never matches). Send it back as `If-Match` on PUT, PATCH and DELETE — for a layer, its own or its frame's revision. If someone changed the resource since, the answer is 412 `PRECONDITION_FAILED` with `currentRevision`, and nothing is overwritten: re-read, re-apply, retry. `If-None-Match: *` on PUT creates only if absent.
 
 ## Scenes API in practice
 ```bash
@@ -26,8 +27,8 @@ H=(-H "X-API-Key: $STREAMLOOP_API_KEY" -H "X-Workspace-Id: $WORKSPACE")
 curl -s "${H[@]}" -X POST https://api.streamloop.app/v1/scenes -H 'content-type: application/json' -H "Idempotency-Key: $(uuidgen)" -d '{"name":"Matchday"}'
 # a frame in it, written as its code (the JSX dialect: GET …/resources/element/* lists the elements)
 curl -s "${H[@]}" -X PUT "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main" -H 'content-type: text/jsx' --data-binary @main.jsx
-# a merge patch on one layer — e.g. a score from your own server
-curl -s "${H[@]}" -X PATCH "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main/score" -H 'content-type: application/merge-patch+json' -d '{"props":{"value":"2 – 1"}}'
+# a merge patch on one layer — e.g. a score from your own server (a Text's or Number's text is props.value)
+curl -s "${H[@]}" -X PATCH "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main/score" -H "If-Match: $ETAG" -H 'content-type: application/merge-patch+json' -d '{"props":{"value":"2 – 1"}}'
 curl -s "${H[@]}" "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main?as=image" -o main.png   # look before publishing
 # publish exactly the draft you checked: its revision is the Draft-Revision header (and draftRevision in every draft answer)
 REV=$(curl -s -D - -o /dev/null "${H[@]}" "https://api.streamloop.app/v1/scenes/$SCENE" | tr -d '\r' | awk -F': ' 'tolower($1)=="draft-revision"{print $2}')

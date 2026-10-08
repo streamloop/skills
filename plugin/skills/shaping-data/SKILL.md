@@ -4,7 +4,7 @@ description: "Creates and changes the tables of a Streamloop scene through the S
 ---
 # Shaping data
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — `scene_get('frame/intro', { as: 'image' })` below is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
 
 A table is what the show reads at `data.<id>.rows` (media sources are at `sources.<id>`). Give every row an `id`. Rows keep their nesting: `row.meta.price` and `data.quote.rows[0].regularMarketPrice` bind and type-check like any column.
 
@@ -22,7 +22,7 @@ Change rows later with its `revision` and `edits: { rows: [...] }` — a merge p
 - `sheets`: a sheet shared with anyone with the link just works; a private one is read by the studio's service account, and when Google refuses the error names the account — tell the operator to share the sheet with it (Viewer), then set again.
 - `pick` on `json`: a path into the document — an array there is the rows, an object one row: `pick: "chart.result[0].meta"`. Without it the document itself must be an array of rows or one object.
 - `pick` on `html`: a CSS selector — each matching element is a row `{ id, text, href?, src? }`.
-- `refreshSeconds` re-fetches (5 or more; 0 = once). Fetches go out from Streamloop's servers, as on air: a feed that needs no key works, CORS doesn't matter.
+- `refreshSeconds` re-fetches (5 or more; 0 = once; 60 suits a sheet, 10–30 a feed that moves). Write a formula against the types the probe shows for each column (a sheet's TRUE arrives as a boolean, a number as a number, a date as the text the cell holds). Fetches go out from Streamloop's servers, as on air: a feed that needs no key works, CORS doesn't matter.
 - `headers` sends request headers with every fetch, e.g. `{ Accept: "application/json" }`. A key (Authorization, X-Api-Key, …) is saved as a secret — `set_scene_secret({ scene, name, value })` with a key the user gave you — and the header reads `"$secret:<name>"`. Header values other than secret names read as hidden, and so does a key in the URL's query (`?api_key=(hidden)`): save those with `set_scene_secret` too, and a URL you set keeps them as they are. Probe with the same headers first (a `$secret:` reference works there too).
 - Keys are never guessed: no `apikey=demo`, no made-up or borrowed tokens, in a URL or a header — probe and set refuse them. When a feed needs a key, ask the operator for it and stop there. Two failures on one idea: stop, remove the source, ask.
 

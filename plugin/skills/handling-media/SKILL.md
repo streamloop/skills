@@ -4,7 +4,7 @@ description: "Sets up the media sources of a Streamloop scene through the Stream
 ---
 # Handling media
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — `scene_get('frame/intro', { as: 'image' })` below is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
 
 Media sources are `source/<kind>/<id>`: rtmp, srt, camera (a guest joins by link), rtsp (an IP camera the platform pulls), file, hls, web, playlist. scene_get('source/<kind>') lists a kind's props; scene_get('source/*') lists its sources.
 

@@ -4,7 +4,7 @@ description: "Automates a Streamloop scene with its script through the Streamloo
 ---
 # Scripting the show
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — `scene_get('frame/intro', { as: 'image' })` below is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
 
 Two files: `script/show.ts` (behaviour) and `script/state.ts` (the `State` type). get both before changing either. The script usually has handlers already: add a trigger and a branch to the existing handler; never declare a handler twice. Change them with `edits: [{ old, new }]`. Both are type-checked when set; an error names the line.
 

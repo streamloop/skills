@@ -7,17 +7,18 @@ description: Sets up and runs 24/7 video loops on Streamloop with its MCP — up
 A **stream** (`stream_…`) loops its **video playlist** (with an optional **audio playlist** under it) to its **destinations**, now or on a schedule, on Streamloop's servers. It spends the workspace's credits while it runs. Everything belongs to one **workspace**: an empty list is more often the wrong workspace than an empty account (`get_selected_workspace`, `list_workspaces`, `select_workspace`).
 
 ## Setting one up — the order matters
-1. `create_stream { name, quality, framerate }`. It comes with two empty playlists, one video and one audio.
+1. `create_stream { name, quality: "q_1080p", framerate: "f_30" }` (`q_720p | q_1080p | q_1440p | q_2160p`; `f_24 | f_25 | f_30 | f_60`; 1080p at 30 fps suits most channels). It comes with two empty playlists, one video and one audio.
 2. Media in, one of two ways:
-   - **A link** (a video page, a direct file, a file the user attached in the chat): `discover_external_media { url }` → `import_upload_from_url { url, selections }` with the asset and quality ids it handed out (they can't be made up), then `get_upload` until it's finished.
-   - **A local file**: `create_upload` → PUT the bytes to `uploadUrl` with the same Content-Type (do it yourself if you can make HTTP requests, else hand the URL to the user) → `complete_upload`. Up to 1.5 GB per file (5 GB on a paid plan): split longer videos.
-3. `list_playlists { streamId }` → the video playlist; `apply_playlist_operations` to add the media (all-or-nothing; pass `basedOnVersion` from `get_playlist` so a concurrent edit is reported, not overwritten).
-4. A destination: skill streaming-to-destinations, then `add_stream_destination`.
+   - **A link** (a video page, a direct file, a file the user attached in the chat): `discover_external_media { url }` → `import_upload_from_url { url, selections: [{ assetId, qualityId }] }` with the asset and quality ids it handed out (they can't be made up; pick the quality nearest the stream's), then `get_upload { id }` until `uploaded` is true (`externalSource.state.status` goes `PENDING`, `RESOLVING`, `DOWNLOADING`, `UPLOADING`, then `COMPLETED`, or `FAILED` with why).
+   - **A local file**: `create_upload` → PUT the bytes to `uploadUrl` with the same Content-Type (do it yourself if you can make HTTP requests, else hand the URL to the user) → `complete_upload`. Up to 1.5 GB per file (5 GB once the account has bought credits): split longer videos.
+3. `list_playlists { streamId }` → the video playlist's id; `get_playlist { id }` for its `version`; then `apply_playlist_operations { playlistId, basedOnVersion, operations }`. Each operation is one key: `{ addObjects: { objectIds: ["obj_…"], position: "END" } }` (`START | END | INDEX` with `index`), `{ removeItems: { itemIds: ["plitm_…"] } }` (item ids from `get_playlist`, not media ids), `{ reorderItems: { moves } }`, `{ updateSettings: { … } }` (sequential or shuffle). All-or-nothing, in order; `basedOnVersion` makes a concurrent edit a refusal, not an overwrite.
+4. A destination: one the workspace has (`list_destinations { kind: "youtube", status: "active" }` for a connected channel) or a new one (skill streaming-to-destinations), then `add_stream_destination { streamId, destinationId }`.
 5. `check_stream_readiness` — every blocking issue at once — then `start_stream` or `schedule_stream`. There is nothing to publish before a first start: it takes the playlist as it is. Read `state` in `start_stream`'s answer: `invalid` means refused (`started: false`, with `issues` — fix them and start again); `preparing` means accepted, live within about a minute. A just-completed upload's media facts arrive about 15–25 s later: wait that long before starting on it.
 
 ## Schedules (the rules that bite)
 - Every time carries an explicit UTC offset: `2026-09-22T21:00:00-04:00`, never a bare local time. The user's clock is not UTC.
-- `repeat: daily | weekly` needs an end time and a window under 24 h; weekly `days` are the UTC weekdays of the start instant — a Monday 9 pm Eastern window repeats on Tuesday in UTC. The answer echoes the window in UTC: read it back to the user.
+- `schedule_stream { streamId, scheduleStartAt, scheduleEndAt?, repeat?: "none" | "daily" | "weekly", days?: ["MONDAY", …] }`. `daily` and `weekly` need an end time and a window under 24 h; weekly `days` (uppercase English names) are the UTC weekdays of the start instant — a Monday 9 pm Eastern window repeats on Tuesday in UTC. The answer echoes the window in UTC: read it back to the user in their time.
+- The offset is fixed, not a time zone: when the user's clocks change for daylight saving, the window moves an hour in their day. Say so, and schedule it again after the change.
 - A schedule only arms a window: the stream must already be ready (`check_stream_readiness`).
 
 ## Changing a live stream

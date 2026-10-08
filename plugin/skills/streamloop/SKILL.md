@@ -27,11 +27,13 @@ Pick **video** when the channel is media on repeat: music, ambience, a show arch
 2. **A stream** with a name, resolution and frame rate.
 3. **What it plays**: a video playlist of uploads (files or imports from a link), or a scene built and published.
 4. **A destination** attached to it: a managed YouTube channel (sign-in, the broadcast is managed), or a stream key for any RTMP platform.
-5. **A readiness check**, then **start** now or on a **schedule** (once, daily, weekly; every time with its UTC offset). Live within about a minute. Edit the playlist or the scene while live; viewers see the change, the stream doesn't stop.
+5. **A readiness check**, then **start** now or on a **schedule** (once, daily, weekly; every time with its UTC offset). Live within about a minute. While live, an edited playlist goes on air with one more call (a swap) and an edited scene with a publish; the stream doesn't stop.
+
+A second destination on one stream (multistream) is a feature the workspace must have; without it the add is refused with `MULTISTREAM_NOT_ENABLED`, and the person turns it on in the dashboard.
 
 ## Quality and cost
 
-Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 60. **1080p at 30 fps suits most channels.** Credits: $1 is 1,000,000. Per hour live, 1080p 30 fps is about $0.0139 (about $10 a month around the clock; 720p about $5, 4K about $30); 60 fps and higher resolutions cost more. Added: a one-time encoding fee per minute of uploaded media, a flat fee per 30 days for each destination after the first (by resolution), YouTube's backup ingest doubles the streaming cost, and a scene adds rendering (a 1080p 30 fps scene loop is about $20 per 30 days: $10 streaming, $10 rendering, at the beta price). Files up to 1.5 GB each on a free account, 5 GB once paid. New accounts can claim free credits for about an hour of streaming; nothing an agent does can buy credits.
+Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 60. **1080p at 30 fps suits most channels.** Credits: $1 is 1,000,000. Per hour live, 1080p 30 fps is about $0.0139 (about $10 a month around the clock; 720p about $5, 4K about $30); 60 fps and higher resolutions cost more. On top: encoding each uploaded file once, $0.005 per minute of media; each destination after the first, a flat fee per 30 days by resolution ($3.50 at 720p, $6 at 1080p, $8 at 1440p, $12.50 at 4K); YouTube's backup ingest doubles the streaming cost; a scene adds rendering (a 1080p 30 fps scene loop is about $20 per 30 days: $10 streaming, $10 rendering, at the beta price). `get_billing_overview` answers the rate card and the balance. Files up to 1.5 GB each until the account has bought credits, 5 GB after. New accounts can claim free credits for about an hour of streaming; nothing an agent does can buy credits.
 
 ## Which way in
 

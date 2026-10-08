@@ -4,12 +4,12 @@ description: "Lays out and restyles the frames of a Streamloop scene through the
 ---
 # Composing frames
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — `scene_get('frame/intro', { as: 'image' })` below is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
 
 ## Workflow
 1. New frame: pick an id that isn't taken (scene_get('frame/*') lists them). Existing frame: get it (its code and revision).
 2. Decide the structure before any coordinates: which things move together? Rows, columns, cards, badges and anything with text → a Stack (it flows its children). Layers that keep their own x/y but should show, hide or move together → a Group, or a fragment `<>…</>` under one condition. One-off placement on the frame → an element with x/y.
-3. Write the code and set it: `edits: [{ old, new }]` for a small change, `value: { name, description, code }` for a new or rewritten frame (on a rewrite, a field you leave out keeps what the frame has). The stored code is re-indented on every set; `old` matches ignoring whitespace, so edit from the code you last read without re-reading it.
+3. Write the code and set it: `edits: [{ old, new }]` for a small change, `value: { name, description, code }` for a new or rewritten frame (send all three on a rewrite: `value` is the whole frame). The stored code is re-indented on every set; `old` matches ignoring whitespace, so edit from the code you last read without re-reading it.
 4. Check once: get the frame `as: 'image'` (overlay `ids` outlines the layers). The answer lists `drawn`, `notDrawn` and `issues` (cut-off text, outside title-safe, overlaps, text too small). Fix the issues, then stop.
 
 ## The code
@@ -25,7 +25,7 @@ description: "Lays out and restyles the frames of a Streamloop scene through the
 - `code` is the `<Frame>` element alone: the frame's id is its path. Layer ids are unique in the whole show; keep existing ones. Name layers with `layer={{ name, description }}`.
 - Backgrounds: `{ type: "solid", color }` · `{ type: "gradient", from, to, angle }` · `{ type: "image", src }` · `{ type: "video", source }`, with literal values (no bindings or tokens; for a token colour, put a full-frame Rect first).
 - Elements: Stack, Group, Rect, Text, Number, Clock, Ticker, Image, Video, Lottie, Aurora, Audio, and the show's components. Their props: scene_get('element/<Type>'); the box props all share: scene_get('element').
-- A picture from the web: give its URL as `src`. Setting the frame imports it into the show (the answer names the file, `uploads/…`) and the code names the file from then on — on air the channel renders files, never URLs. A URL the studio can't fetch is refused: use another picture or attach the file.
+- A picture from the web: give its URL as `src`. Setting the frame imports it into the show (the answer names the file, `uploads/…`) and the code names the file from then on — on air the channel renders files, never URLs. A URL the studio can't fetch is refused: use another picture or attach the file. A picture the workspace already has as an upload: its `downloadUrl` (from `get_upload`) is such a URL.
 - `style` is not CSS. A box takes `background`, `borderColor`, `borderWidth`, `borderRadius`, `boxShadow`; text adds `fontFamily`, `fontWeight`, `fontSize`, `fontStyle`, `color`, `textAlign`, `lineHeight`, `letterSpacing`. `style` has no margin or per-side borders: inside a Stack a child takes `margin` (px, `[vertical, horizontal]` or `[top, right, bottom, left]`), `grow`, `alignSelf`, `minW`/`maxW` as props next to the Stack's `gap`/`padding`; a rule is a thin Rect.
 - Live values (`state.…`, `data.…`, `sources.…`, repeats, conditions): skill binding-live-data.
 
