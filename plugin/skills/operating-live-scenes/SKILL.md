@@ -7,7 +7,7 @@ description: Runs a Streamloop scene while it is on air with the Streamloop MCP 
 On air, every call here is seen by viewers at once. Say what you are about to do, and for anything the user didn't ask for in so many words, ask first.
 
 ## What is on air
-`get_scene_state { scene }` — each stream that plays it: the stream's state, and while it runs the frame on air (`frame: "<id>"`), the one cued next (`next`), the controls' values, each source's status (live / waiting / down) and what its playlists play. Read it before acting: it is how you know which `frame/<id>` ids and controls exist on air (the draft may differ from what was published).
+`get_scene_state { scene }` — each stream that plays it: the stream's state, and while it runs the frame on air (`frame: "<id>"`), the one cued next (`next`), the controls' values, each source's status (live / waiting / down) and what its playlists play. Read it before acting: it says what is on air now and the controls' values by id. Which frames and controls the published version has (the draft may differ): `scene_get { scene, path: "frame/*", version: "published" }` and the same for `control/*`.
 
 ## Acting
 `control_scene { scene, op, … }` (`streamId` too when more than one stream plays it):

@@ -24,7 +24,7 @@ Pick **video** when the channel is media on repeat: music, ambience, a show arch
 ## The way to live, in order
 
 1. **A workspace**: everything belongs to one; an empty list is usually the wrong workspace, not an empty account.
-2. **A stream** with a name, resolution and frame rate.
+2. **A stream** with a name, resolution and frame rate — and, for around the clock, `streamDuration: 0`: a run otherwise stops after the account's default run length.
 3. **What it plays**: a video playlist of uploads (files or imports from a link), or a scene built and published.
 4. **A destination** attached to it: a managed YouTube channel (sign-in, the broadcast is managed), or a stream key for any RTMP platform.
 5. **A readiness check**, then **start** now or on a **schedule** (once, daily, weekly; every time with its UTC offset). Live within about a minute. While live, an edited playlist goes on air with one more call (a swap) and an edited scene with a publish; the stream doesn't stop.

@@ -61,7 +61,7 @@ export function onTick(_e: TickEvent, { show }: Ctx): Update {
 - state: a partial State (deep-merged), or ops `set("a.b", v)`, `merge("a", {…})`, `del("a.b")`, `push("list", item)`.
 - effects (5 at most): `goFrame(id, { transition: "fade" | "cut" | "slide" | "wipe" | "dip", ms })` (a frame's live inputs, pages and clips start when the frame is cued or taken; `goFrame(id, { prepare: true })` cues it ahead so the take is instant, otherwise the take waits for them, 5 s at most), `adBreak(30 | 60 | 90 | 120)`, `skipTrack(playlistId)`, `log("message")`.
 - Helpers: `rotate(list, ctx.meta, "key")` (next item, cycling), `topN(rows, n, "field")`, `changed(e, "field")`, `fmt.time(v, "HH:mm")`.
-- Back to where the show was: `onFrame` keeps the frame in state (`set("prev", e.frame)`, a `string` field), and a later handler takes `goFrame(state.prev)` — a frame id held in state is accepted as it is.
+- Back to where the show was: `onFrame` keeps the frame that was on air before this one in state (`e.previous`, null on the first take: `return e.previous ? { state: [set("prev", e.previous)] } : {}`, a `string` field), and a later handler takes `goFrame(state.prev)` — a frame id held in state is accepted as it is. `e.frame` is the frame just taken, not the one to go back to.
 
 ## New state
 Add the field to `script/state.ts` first, with a doc comment (it becomes its description), then give it a value in `onStart` — a show that is already running takes the new field's value from there, the rest of its state stays:
