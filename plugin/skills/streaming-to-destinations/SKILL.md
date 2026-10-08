@@ -24,4 +24,4 @@ Start with `get_connection_hints { platform }` (`youtube`, `twitch`, `facebook`,
 With a managed YouTube destination, `update_stream { id, youtube: { title, description, privacy, … } }` sets the broadcast; `get_stream_live_stats` reads viewers. Applied settings stay even if the YouTube part fails — read `youtubeSettingsError`. After a reconnect, `retryMirror: true` mirrors the schedule onto YouTube again.
 
 ## Costs, briefly
-Each destination after the first adds a flat fee per 30 days by resolution ($3.50 at 720p, $6 at 1080p, $8 at 1440p, $12.50 at 4K), and YouTube's backup ingest (`runBackupStream`) doubles the streaming cost. `get_billing_overview` shows the rate card; nothing here can spend or buy credits.
+Each destination after the first adds a flat fee per 30 days by resolution ($3.50 at 720p, $6 at 1080p, $8 at 1440p, $12.50 at 4K), and YouTube's backup ingest (`runBackupStream`) doubles the streaming cost. `get_billing_overview` shows the balance; an extra destination spends credits once the stream runs, and nothing here can buy them.

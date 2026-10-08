@@ -41,7 +41,7 @@ Only schedules are declared (`triggers`); every other handler runs for each even
 | `{ at: "<cron>", name }` | on a schedule | `onTick(e: TickEvent)` — `e.name` |
 | (handler present) | the operator changes a control or presses a button | `onControl(e: ControlEvent)` — `e.control`, `e.value` (none for a button); branch on `e.control` |
 | (handler present) | a table changes | `onData(e: DataEvent)` — `e.source` |
-| (handler present) | a feed's status changes: `live`, `waiting` (no encoder yet), `down`, `empty`, `unknown` | `onSource(e: SourceEvent)` — `e.source` (its id), `e.status`; e.g. `if (e.source === "cam") return { effects: [goFrame(e.status === "live" ? "liveFeed" : "wall", { transition: "fade" })] }`. A slate while a feed is down needs no script: it is the source's `fallback` (skill handling-media); script it only when the frame itself should change |
+| (handler present) | a feed's status changes: `live`, `waiting` (no encoder yet), `down`, `empty` | `onSource(e: SourceEvent)` — `e.source` (its id), `e.status`; e.g. `if (e.source === "cam") return { effects: [goFrame(e.status === "live" ? "liveFeed" : "wall", { transition: "fade" })] }`. A slate while a feed is down needs no script: it is the source's `fallback` (skill handling-media); script it only when the frame itself should change |
 | (handler present) | a frame goes on air | `onFrame(e: FrameEvent)` — `e.frame`, `e.previous` |
 | (handler present) | a playlist moves to the next item | `onTrack(e: TrackEvent)` |
 

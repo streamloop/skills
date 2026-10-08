@@ -10,7 +10,7 @@ Two APIs on one host, `https://api.streamloop.app`, with the same conventions. E
 
 ## Auth and workspace
 - Your own scripts use an **API key** (`sl_…`, created in the dashboard), sent as `X-API-Key: sl_…`. Keep it server-side, read it from an environment variable, and never write it into code or a browser bundle.
-- An API key carries no workspace, so every request names one in `X-Workspace-Id: wksp_…`. The one route that needs no header is the bootstrap: `GET /v1/workspaces` answers a plain array of the key's workspaces (id, name, your role); pick one and send its id from then on. Without the header any other route answers 400 `WORKSPACE_REQUIRED`.
+- An API key carries no workspace, so every request names one in `X-Workspace-Id: wksp_…`. The one route that needs no header is the bootstrap: `GET /v1/workspaces` answers a plain array of the key's workspaces (id, name, your role); pick one and send its id from then on. Without the header any other route answers 400 `WORKSPACE_REQUIRED` (the OpenAPI documents are public and need neither header nor key).
 - Apps acting for other users use OAuth 2.1 with PKCE (`https://auth.streamloop.app`) and send `Authorization: Bearer …`. Ask for the narrowest scopes: `streamloop:read`, `:write`, `:destructive`.
 
 ## Conventions you can rely on
@@ -24,10 +24,11 @@ Two APIs on one host, `https://api.streamloop.app`, with the same conventions. E
 ## Scenes API in practice
 ```bash
 H=(-H "X-API-Key: $STREAMLOOP_API_KEY" -H "X-Workspace-Id: $WORKSPACE")
-curl -s "${H[@]}" -X POST https://api.streamloop.app/v1/scenes -H 'content-type: application/json' -H "Idempotency-Key: $(uuidgen)" -d '{"name":"Matchday"}'
+SCENE=$(curl -s "${H[@]}" -X POST https://api.streamloop.app/v1/scenes -H 'content-type: application/json' -H "Idempotency-Key: $(uuidgen)" -d '{"name":"Matchday"}' | jq -r .id)
 # a frame in it, written as its code (the JSX dialect: GET …/resources/element/* lists the elements)
 curl -s "${H[@]}" -X PUT "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main" -H 'content-type: text/jsx' --data-binary @main.jsx
-# a merge patch on one layer — e.g. a score from your own server (a Text's or Number's text is props.value)
+# a merge patch on one layer — e.g. a score from your own server (a Text's or Number's text is props.value); If-Match is the ETag a GET of that layer answered
+ETAG=$(curl -s -D - -o /dev/null "${H[@]}" "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main/score" | tr -d '\r' | awk -F': ' 'tolower($1)=="etag"{print $2}')
 curl -s "${H[@]}" -X PATCH "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main/score" -H "If-Match: $ETAG" -H 'content-type: application/merge-patch+json' -d '{"props":{"value":"2 – 1"}}'
 curl -s "${H[@]}" "https://api.streamloop.app/v1/scenes/$SCENE/resources/frame/main?as=image" -o main.png   # look before publishing
 # publish exactly the draft you checked: its revision is the Draft-Revision header (and draftRevision in every draft answer)

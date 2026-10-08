@@ -4,7 +4,7 @@ description: What Streamloop is and how a stream gets on air — the two kinds o
 ---
 # Streamloop
 
-Streamloop runs a live stream from the cloud, around the clock: no OBS, no encoder, no PC left on. A **loop** is a stream set up once and left running; the API and the MCP call it a **stream** (`stream_…`). It plays to **destinations** (YouTube, Twitch, Kick, Facebook, X, TikTok, LinkedIn, Telegram or any RTMP server; up to 5 at once from one encode, at most one YouTube) and spends the workspace's **credits** only while live. Streamloop watches every stream and restarts it if it stalls (over 99.9 % uptime); YouTube and RTMP keys are encrypted at rest.
+Streamloop runs a live stream from the cloud, around the clock: no OBS, no encoder, no PC left on. A **loop** is a stream set up once and left running; the API and the MCP call it a **stream** (`stream_…`). It plays to **destinations** (YouTube, Twitch, Kick, Facebook, X, TikTok, LinkedIn, Telegram or any RTMP server; up to 5 at once from one encode, at most one YouTube) and spends the workspace's **credits** while live (plus a one-time encoding fee per uploaded file). Streamloop watches every stream and restarts it if it stalls (over 99.9 % uptime); YouTube and RTMP keys are encrypted at rest.
 
 ## Two kinds of loop: choose first
 
@@ -33,7 +33,7 @@ A second destination on one stream (multistream) is a feature the workspace must
 
 ## Quality and cost
 
-Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 60. **1080p at 30 fps suits most channels.** Credits: $1 is 1,000,000. Per hour live, 1080p 30 fps is about $0.0139 (about $10 a month around the clock; 720p about $5, 4K about $30); 60 fps and higher resolutions cost more. On top: encoding each uploaded file once, $0.005 per minute of media; each destination after the first, a flat fee per 30 days by resolution ($3.50 at 720p, $6 at 1080p, $8 at 1440p, $12.50 at 4K); YouTube's backup ingest doubles the streaming cost; a scene adds rendering (a 1080p 30 fps scene loop is about $20 per 30 days: $10 streaming, $10 rendering, at the beta price). `get_billing_overview` answers the rate card and the balance. Files up to 1.5 GB each until the account has bought credits, 5 GB after. New accounts can claim free credits for about an hour of streaming; nothing an agent does can buy credits.
+Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 60. **1080p at 30 fps suits most channels.** Credits: $1 is 1,000,000. Per hour live, 1080p 30 fps is about $0.0139 (about $10 a month around the clock; 720p about $5, 4K about $30); 60 fps and higher resolutions cost more. On top: encoding each uploaded file once, $0.005 per minute of media; each destination after the first, a flat fee per 30 days by resolution ($3.50 at 720p, $6 at 1080p, $8 at 1440p, $12.50 at 4K); YouTube's backup ingest doubles the streaming cost; a scene adds rendering (a 1080p 30 fps scene loop is about $20 per 30 days: $10 streaming, $10 rendering, at the beta price). `get_billing_overview` answers the rate card and the balance. Files up to 1.5 GB each until the account has bought credits, 5 GB after. A new account can claim $5 of credits once (`get_account` says whether it still can); nothing an agent does can buy credits.
 
 ## Which way in
 
