@@ -10,7 +10,7 @@ Two APIs on one host, `https://api.streamloop.app`, with the same conventions. E
 
 ## Auth and workspace
 - Your own scripts use an **API key** (`sl_…`, created in the dashboard), sent as `X-API-Key: sl_…`. Keep it server-side, read it from an environment variable, and never write it into code or a browser bundle.
-- An API key carries no workspace, so every request names one in `X-Workspace-Id: wksp_…`. The one route that needs no header is the bootstrap: `GET /v1/workspaces` answers a plain array of the key's workspaces (id, name, your role); pick one and send its id from then on. Without the header every route that acts in a workspace answers 400 `WORKSPACE_REQUIRED`; the OpenAPI documents and `GET /v1/status` are public and need neither header nor key.
+- An API key carries no workspace, so every request names one in `X-Workspace-Id: wksp_…`. The bootstrap needs none: `GET /v1/workspaces` answers a plain array of the key's workspaces (id, name, your role); pick one and send its id from then on (`GET /v1/me`, who the key belongs to, needs none either). Without the header every route that acts in a workspace answers 400 `WORKSPACE_REQUIRED`; the OpenAPI documents and `GET /v1/status` are public and need neither header nor key.
 - Apps acting for other users use OAuth 2.1 with PKCE (`https://auth.streamloop.app`) and send `Authorization: Bearer …`. Ask for the narrowest scopes: `streamloop:read`, `:write`, `:destructive`.
 
 ## Conventions you can rely on
