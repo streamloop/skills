@@ -48,7 +48,9 @@ Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 
 | uploads, playlists, schedules, a stream that won't start, a live playlist swap | running-24-7-loops |
 | YouTube, Twitch, any RTMP; multistream; one destination off while live | streaming-to-destinations |
 | which workspace, credits left, burn rate, past usage | managing-workspaces-and-credits |
-| a scene from nothing to on air | building-scenes, then composing-frames, animating-frames, shaping-data, binding-live-data, writing-components, scripting-the-show, handling-media, coding-web-pages |
+| a scene from nothing to on air | building-scenes, then composing-frames, animating-frames, shaping-data, binding-live-data, scripting-the-show, handling-media |
+| a design to reuse across frames (a lower third, a score bug, a card) | writing-components: the show's own elements composed into one |
+| a layer the show's elements can't draw (rich CSS, SVG, charts, canvas), or the user asks for HTML or React | coding-web-pages: a web page rendered in a layer |
 | a scene while it is on air | operating-live-scenes |
 | a script or backend without the MCP | calling-the-streamloop-api |
 

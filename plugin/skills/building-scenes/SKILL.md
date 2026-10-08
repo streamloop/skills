@@ -17,7 +17,7 @@ A **scene** (`scn_…`) is what a stream plays when it isn't a video loop. It is
 1. `create_scene { name }` — or `list_scenes` to work in one that exists.
 2. Learn the vocabulary once: `scene_get ""`, then `scene_get element/*`. Read `element/<Type>` before you use a type you haven't: props differ (Text wraps only with `width`; a Stack places its children and ignores their x/y).
 3. Data first, if any: `scene_probe { url }` shows the rows a table would get — and names the `pick` when the rows are a list inside the document. Then `scene_set source/data/<id>` with `connector`, `url`, `pick`, `refreshSeconds`; the answer says what arrived. A key the user gave goes in with `set_scene_secret` and is named `"$secret:<name>"` — never write a key into a URL or header, and never invent one.
-4. A frame: `scene_set frame/<id> { value: { name, description, code } }`, where `code` is one `<Frame background={…}>…</Frame>` element; later layers draw on top of earlier ones. The smallest one that works:
+4. A frame: `scene_set frame/<id> { value: { name, description, code } }`, where `code` is one `<Frame background={…}>…</Frame>` element of layers (`Text`, `Number`, `Rect` for a box or bar, `Image`, `Video`, `Ticker`, `Stack` to lay children out — `element/*` lists them all); later layers draw on top of earlier ones. The smallest one that works:
    ```jsx
    <Frame background={{ type: "solid", color: "#0B1B3A" }}>
      <Text id="title" value="Starting soon" x={96} y={440} width={1728} style={{ fontSize: 120, fontWeight: 800, color: "#FFFFFF", textAlign: "center" }} />
