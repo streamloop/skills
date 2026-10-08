@@ -15,7 +15,7 @@ description: "Shows live values in a Streamloop scene through the Streamloop MCP
 | `sources.<id>.status` | A media source's `live`, `waiting`, `down`, `empty`, `idle` (not on a frame on air or cued, so not running) | — |
 | `show.frame`, `show.next`, `show.live` | What's on air | — |
 | `show.now` | The current time | — |
-| `controls.<id>` | The operator's inputs (toggle, text, number, select); declare one with scene_set('control/<id>', { value: { type, label } }) — no script needed | scene_get('control/*') |
+| `controls.<id>` | The operator's inputs (toggle, text, number, select); declare one with scene_set('control/<id>', { value: { type, label, default?, group? } }) — a toggle reads as a boolean; the picture shows controls at their `default`; no script needed | scene_get('control/*') |
 | `tokens.…` | Style tokens | scene_get('tokens') |
 
 Every path is checked when the frame is set: a path that doesn't exist is refused with its name. A value the show doesn't have yet → add it to state (skill scripting-the-show) or a table (skill shaping-data).

@@ -15,7 +15,7 @@ scene_set('source/web/scoreBug', { value: {
   styles: "@theme { --color-brand: #F43F5E; --color-ink: #0B0F1A; }"
 } })
 ```
-A `Video` layer shows it (a web source is a picture source like a feed), inside the frame's `<Frame …>…</Frame>`, and passes its props — each a literal or bound like any prop: a table's rows are `data.<id>.rows`, a control `controls.<id>`, show state `state.<field>` (skill binding-live-data); a bound prop re-renders the page whenever its value changes on air:
+A `Video` layer shows it (a web source is a picture source like a feed), inside the frame's `<Frame …>…</Frame>`, and passes its props — each a literal or bound like any prop: a table's rows are `data.<id>.rows`, a control `controls.<id>`, show state `state.<field>` (skill binding-live-data); a bound prop re-renders the page whenever its value changes on air. The frame is 1920×1080 design px from the top-left (title-safe: x 96–1824, y 54–1026); a chart is divs or inline SVG you draw, there is no chart library:
 ```jsx
 <Video id="bug" source="scoreBug" x={96} y={54} w={560} h={120} props={{ home: state.score.home, away: state.score.away, label: "LIVE" }} />
 ```
