@@ -4,7 +4,7 @@ description: "Shows live values in a Streamloop scene through the Streamloop MCP
 ---
 # Binding live data
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries; while a stream plays the scene it answers CONFIRM_REQUIRED — tell the user what changes, then `confirm: true`). Starting one from nothing: skill building-scenes.
 
 ## What a frame can read
 | Root | Holds | Where its shape is |
@@ -24,11 +24,11 @@ Every path is checked when the frame is set: a path that doesn't exist is refuse
 - Binding: `value={controls.guestName}`, `style={{ color: tokens.colors.accent }}`
 - Template: ``value={`Now playing: ${sources.music.track.title}`}``
 - Condition: `{state.breaking ? <Stack id="alert" …/> : null}`. Else: `{state.live ? <A …/> : <B …/>}`. Several layers under one condition: a fragment, `{cond ? <Video …/> : <><Text …/><Stack …/></>}` — each keeps its x/y (unlike wrapping them in a Stack, which re-flows them).
-- Repeat: `{data.stories.rows.map((row) => <Stack id="card" key={row.id} max={6}>…{row.title}…</Stack>)}` — `max` caps it; part of a list is `slice(data.songs.rows, 1, 4).map(…)` ("the next three").
-  - `key` is required (the row's id); `max` caps the count (default 50).
+- Repeat: `{data.stories.rows.map((row) => <Stack id="card" key={row.id} max={6}><Text id="cardTitle" value={row.title} /></Stack>)}` — `max` on the repeated element caps it; part of a list is `slice(data.songs.rows, 1, 4).map(…)` ("the next three").
+  - `key` is required: the row's `id` (every row has one — typed-in rows name it, fetched rows get one); `max` caps the count (default 50). Text is always a `<Text value=…/>`, never bare text in a Stack.
   - Put the repeat inside a Stack so the rows lay out; `$index`, `$count`, `$first`, `$last` exist alongside the row (not on it).
   - Rows keep their nesting: `row.meta.price`, `data.quote.rows[0].regularMarketPrice` are fields like any other.
-- A crawl takes the whole table, no repeat: `<Ticker id="crawl" items={data.stories.rows} field="title" …/>` scrolls each row's `title` in a loop (skill composing-frames, examples).
+- A crawl takes a list, no repeat: `<Ticker id="crawl" items={data.stories.rows} field="title" …/>` (or `items={slice(data.stories.rows, 0, 5)}`) scrolls each row's `title` in a loop (skill composing-frames, examples). A Ticker has no per-item template or condition and doesn't say which row is passing: a badge per row, or a row shown differently, is a repeat of Stacks, not a Ticker.
 - Expressions are these JS operators — `+ - * / %`, `=== !== < <= > >=`, `&& || !`, `? :` — index and member access (`rows[state.index % 6].title`), and only these functions: `date(v, "DD/MM/YYYY")`, `time(v, "HH:mm")`, `upper(v)`, `lower(v)`, `truncate(v, 40)`, `number(v, "0,0.00")` (`0,0` groups thousands, `0` doesn't, `.00` the decimals, text before or after the digits stays — `"$0,0.00"` — a `%` after the digits shows a fraction as a percentage: `number(0.645, "0.0%")` → `64.5%` (a value already in percent: `number(v, "0.0") + "%"`), and a leading `+` always shows the sign: `"+0.00"`; other patterns are refused), `percent(v)`, `fallback(v, "—")` (in a text; a Number's value takes a number: `fallback(v, 0)`), `slice(list, start, end)`, `String(v)`, `Number(v)`, `Boolean(v)`. No other methods (`.map` is only the repeat), loops or calls: filtering, sorting and paging belong in a formula (skill shaping-data) or the script.
 
 ## Example: the score from state

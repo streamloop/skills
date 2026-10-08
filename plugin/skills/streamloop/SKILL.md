@@ -37,7 +37,7 @@ Resolution 720p, 1080p, 1440p or 4K (scenes to 1080p); frame rate 24, 25, 30 or 
 
 ## Which way in
 
-- **The Streamloop MCP** (`https://mcp.streamloop.app/mcp`, OAuth: the user signs in as themself and approves scopes) is the way for an assistant acting for someone: every dashboard action is a tool, answers say what comes next, refusals say why. The skills below assume it.
+- **The Streamloop MCP** (`https://mcp.streamloop.app/mcp`, OAuth: the user signs in as themself and approves scopes) is the way for an assistant acting for someone: what the dashboard does with loops, media, destinations and scenes is a tool, answers say what comes next, refusals say why. Signing in, paying, YouTube consent, turning multistream on and workspace membership stay with the person in the dashboard. The skills below assume it.
 - **The HTTP APIs** (`https://api.streamloop.app/v1`, REST; `/v1/scenes`, the Scenes API; an API key in `X-API-Key`) are for code: scripts, backends, cron, CI, no-code flows. Same objects, same error codes. Skill: calling-the-streamloop-api.
 - **The dashboard** (`streamloop.app/loops`) and, for scenes, the **studio** with its own assistant, are the user's hands. Point a person there for sign-in, payment, YouTube consent and anything an agent can't do for them.
 

@@ -4,7 +4,7 @@ description: "Creates and changes the tables of a Streamloop scene through the S
 ---
 # Shaping data
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries; while a stream plays the scene it answers CONFIRM_REQUIRED — tell the user what changes, then `confirm: true`). Starting one from nothing: skill building-scenes.
 
 A table is what the show reads at `data.<id>.rows` (media sources are at `sources.<id>`). Give every row an `id`. Rows keep their nesting: `row.meta.price` and `data.quote.rows[0].regularMarketPrice` bind and type-check like any column.
 
@@ -16,7 +16,7 @@ scene_set('source/data/guests', { value: { name: "Guests", description: "Tonight
 Change rows later with its `revision` and `edits: { rows: [...] }` — a merge patch replaces the whole list.
 
 ## From a URL or a web page
-1. `scene_probe({ url })` first — nothing changes in the show: the HTTP status, the shape of what came back (keys and values, or the page's title and text) and the rows a table would make of it. Add `connector` and `pick` to see the rows they give; repeat until the rows are right.
+1. `scene_probe({ url })` first — nothing changes in the show: the HTTP status, the shape of what came back (keys and values, or the page's title and text) and the rows a table would make of it. Add `connector` and `pick` (and `sheet`, the tab, for a Google Sheet or an xlsx) to see the rows they give; repeat until the rows are right.
 2. `scene_set('source/data/<id>', { value: { name, description, connector, url, pick, refreshSeconds } })`. The answer says what arrived — status, rows, columns, the first row — or why nothing did. No need to read status or rows after it.
 - `connector`: `json`, `csv` or `xlsx` with `url`; `sheets` with `url` (and `sheet`, the tab); `html` with `url` and `pick`; `file` with `file` (its path in the show folder).
 - `sheets`: a sheet shared with anyone with the link just works; a private one is read by the studio's service account, and when Google refuses the error names the account — tell the operator to share the sheet with it (Viewer), then set again.

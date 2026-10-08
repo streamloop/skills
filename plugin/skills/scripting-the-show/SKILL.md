@@ -4,7 +4,7 @@ description: "Automates a Streamloop scene with its script through the Streamloo
 ---
 # Scripting the show
 
-> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries). Starting one from nothing: skill building-scenes.
+> With the Streamloop MCP: every `scene_*` tool also takes `scene`, the scene's id (`scn_…`) — a call written `scene_get('frame/intro', { as: 'image' })` is `scene_get { scene, path: "frame/intro", as: "image" }`. Changing or removing something that exists also takes its `revision` (a layer: its own or its frame's; `"*"` overwrites on purpose), or the answer is REVISION_REQUIRED. Every set changes the draft only: viewers see it after `publish_scene { scene, draftRevision }` (the `draftRevision` every answer carries; while a stream plays the scene it answers CONFIRM_REQUIRED — tell the user what changes, then `confirm: true`). Starting one from nothing: skill building-scenes.
 
 Two files: `script/show.ts` (behaviour) and `script/state.ts` (the `State` type). get both before changing either. The script usually has handlers already: add a trigger and a branch to the existing handler; never declare a handler twice. Change them with `edits: [{ old, new }]`. Both are type-checked when set; an error names the line.
 
@@ -41,11 +41,11 @@ Only schedules are declared (`triggers`); every other handler runs for each even
 | `{ at: "<cron>", name }` | on a schedule | `onTick(e: TickEvent)` — `e.name` |
 | (handler present) | the operator changes a control or presses a button | `onControl(e: ControlEvent)` — `e.control`, `e.value` (none for a button); branch on `e.control` |
 | (handler present) | a table changes | `onData(e: DataEvent)` — `e.source` |
-| (handler present) | a feed goes `live` / `down` | `onSource(e: SourceEvent)` — `e.status`; e.g. `return { effects: [goFrame(e.status === "live" ? "liveFeed" : "wall", { transition: "fade" })] }` |
+| (handler present) | a feed's status changes: `live`, `waiting` (no encoder yet), `down`, `empty`, `unknown` | `onSource(e: SourceEvent)` — `e.source` (its id), `e.status`; e.g. `if (e.source === "cam") return { effects: [goFrame(e.status === "live" ? "liveFeed" : "wall", { transition: "fade" })] }`. A slate while a feed is down needs no script: it is the source's `fallback` (skill handling-media); script it only when the frame itself should change |
 | (handler present) | a frame goes on air | `onFrame(e: FrameEvent)` — `e.frame`, `e.previous` |
 | (handler present) | a playlist moves to the next item | `onTrack(e: TrackEvent)` |
 
-Cron has six fields, seconds first: `"0 */10 * * * *"` every 10 minutes, `"0 0 * * * *"` hourly, `"0 30 18 * * 1-5"` 18:30 on weekdays.
+Cron has six fields, seconds first: `"0 */10 * * * *"` every 10 minutes, `"0 0 * * * *"` hourly, `"0 30 18 * * 1-5"` 18:30 on weekdays. "Two minutes of news at the top of the hour" is two triggers (`"0 0 * * * *"` to the news frame, `"0 2 * * * *"` back): there is no sleep and no duration on `goFrame`. A script that doesn't exist yet is created with `value: { code }`; its types (`Trigger`, `Update`, `SourceEvent`, `goFrame`, …) are ambient, nothing is imported.
 
 Some time after the show starts ("go to the guest 30 s in"): cron is wall-clock, so tick often and measure from `ctx.show.liveSince` — once, by checking the frame on air:
 ```ts
