@@ -1,0 +1,9 @@
+{
+  "name": "streamloop",
+  "version": "1.0.0",
+  "description": "Run 24/7 streams and build live scenes on Streamloop: the Streamloop MCP server, and the skills its own studio assistant uses — loops, destinations and multistream, layouts, live data, components, scripts and running a scene on air.",
+  "author": { "name": "Streamloop", "url": "https://streamloop.app" },
+  "homepage": "https://streamloop.app/docs",
+  "license": "MIT",
+  "keywords": ["streaming", "live", "youtube", "twitch", "multistream", "broadcast", "graphics", "overlay", "24/7"]
+}

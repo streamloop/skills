@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "streamloop": {
+      "type": "http",
+      "url": "https://mcp.streamloop.app/mcp"
+    }
+  }
+}

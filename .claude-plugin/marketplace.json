@@ -1,0 +1,12 @@
+{
+  "name": "streamloop",
+  "owner": { "name": "Streamloop", "url": "https://streamloop.app" },
+  "description": "Streamloop for agents: 24/7 streams, multistream and live scenes, through the Streamloop MCP server.",
+  "plugins": [
+    {
+      "name": "streamloop",
+      "source": "./plugin",
+      "description": "Run 24/7 streams and build live scenes on Streamloop: its MCP server and the skills its studio assistant uses."
+    }
+  ]
+}
