@@ -17,7 +17,7 @@ Change rows later with its `revision` and `edits: { rows: [...] }` — a merge p
 
 ## From a URL or a web page
 1. `scene_probe({ url })` first — nothing changes in the show: the HTTP status, the shape of what came back (keys and values, or the page's title and text) and the rows a table would make of it. Add `connector` and `pick` (and `sheet`, the tab, for a Google Sheet or an xlsx) to see the rows they give; repeat until the rows are right.
-2. `scene_set('source/data/<id>', { value: { name, description, connector, url, pick, refreshSeconds } })`. The answer says what arrived — status, rows, columns, the first row — or why nothing did. No need to read status or rows after it.
+2. `scene_set('source/data/<id>', { value: { name, description, connector, url, pick, refreshSeconds } })`. The answer says what arrived — the status, how many rows and their columns (nesting shown: enough to bind) — or why nothing did. If it says the fetch is still running, read `source/data/<id>/status`; the row values themselves are `scene_get('source/data/<id>/rows')`.
 - `connector`: `json`, `csv` or `xlsx` with `url`; `sheets` with `url` (and `sheet`, the tab); `html` with `url` and `pick`; `file` with `file` (its path in the show folder).
 - `sheets`: a sheet shared with anyone with the link just works; a private one is read by the studio's service account, and when Google refuses the error names the account — tell the operator to share the sheet with it (Viewer), then set again.
 - `pick` on `json`: a path into the document — an array there is the rows, an object one row: `pick: "chart.result[0].meta"`. Without it the document itself must be an array of rows or one object.
